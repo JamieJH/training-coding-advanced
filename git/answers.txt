@@ -19,14 +19,24 @@ III. If someone accidentally merge a feature (feature/delete-user) onto producti
     of commitId ended with (0492978, fc9348c, k101100), then another commit (a1fsas8) is added 
     on top of the production branch. How do we remove that merged feature? 
 
-    1. Create a new branch from master called fix/master-remove-delete-user and checkout to it
-        git checkout -b fix/master-remove-delete-user master
+    1. Create a new branch from production called fix/master-remove-delete-user and checkout to it
+        git checkout -b fix/master-remove-delete-user production
     2. revert the first commit of the feature
         git revert 0492978
     3. cherry pick the last commit (a1fsas8) from production branch 
         git cherry-pick a1fsas8
-    4. Merge fix/master-remove-delete-user back into master
-        git merge master fix/master-remove-delete-user 
+    4. Merge fix/master-remove-delete-user back into production
+        git merge production fix/master-remove-delete-user 
+    
+
+IV. Extra: If later feature/delete-user need to merged in again, what to do to preserve the 
+    final author of that feature, and not of the one that done the revert?
+    1. To merge the feature back again, revert the revert commit. Suppose this revert create a 
+        commitId of abcdefg
+    2. Do interactive rebase to fix the author of the most recent revert to the original author of the feature
+        git rebase -i abcdefg;
+        Choose option 'edit' next to abcdefg. Then change the author:
+        git commit --amend --author="Original Author Name <author_email@something.com>" --no-edit
 
 
 
