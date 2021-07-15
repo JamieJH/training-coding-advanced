@@ -1,0 +1,51 @@
+Condition: We have 2 big branch call master (to hold test features for test site) & production. 
+
+I. When we are creating new feature, what branch should we based on and why?
+    - We should branch off from production branch, because it contains the most up-to-date and 
+    bug-free version of the project
+    - Git commands:
+        1. Checkout production branch, then create new branch: 
+            git checkout production; git branch feature/some-feature
+        2. Create new branch without checkout production first
+            git branch fix/some-feature production
+
+
+II. If we have a feature branch that haven't been merged to production and that branch have bug, 
+    what course of action are you going to do with Git to before resolving the bug?
+    - Create another branch from the feature called fix/feature-bug-name and checkout to it
+
+
+III. If someone accidentally merge a feature (feature/delete-user) onto production and have a list 
+    of commitId ended with (0492978, fc9348c, k101100), then another commit (a1fsas8) is added 
+    on top of the production branch. How do we remove that merged feature? 
+
+    1. Create a new branch from master called fix/master-remove-delete-user and checkout to it
+        git checkout -b fix/master-remove-delete-user master
+    2. revert the first commit of the feature
+        git revert 0492978
+    3. cherry pick the last commit (a1fsas8) from production branch 
+        git cherry-pick a1fsas8
+    4. Merge fix/master-remove-delete-user back into master
+        git merge master fix/master-remove-delete-user 
+
+
+
+Merge vs. Rebase
+- Both commands integrate changes from one branch into another branch
+- Consider a situation where we want to integrate changes on master branch (source branch) 
+    onto a feature branch (target branch)
+- Merge: 
+    + Merge creates new merge commit into target branch that add all commits of source branch onto it
+        => Can pollute the merge history if there are many commits
+    + Merge is a non-destructive operation, meaning the histories of branches involved 
+    are preserved in chronological order.
+    + Is generally used to merge a feature branch onto master branch
+
+- Rebase: 
+    + Move the entire feature branch to the tip of the master branch.
+    + Rebase makes the histories linear as it transfer all the work from one branch to another
+    + However, since it eliminating commits required by a merge,
+     context can be lost on collaborator.
+    + Is generally used to merge new changes of the branch that feature branch branched from 
+    to incorporate changes that might happens since after branching off
+     
